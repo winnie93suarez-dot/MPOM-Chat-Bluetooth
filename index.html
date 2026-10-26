@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MPOM Chat Bluetooth</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #101827;
+      color: white;
+      margin: 0;
+      padding: 20px;
+    }
+    .app {
+      max-width: 500px;
+      margin: auto;
+      background: #1e293b;
+      padding: 20px;
+      border-radius: 15px;
+    }
+    h1 { color: #38bdf8; text-align: center; }
+    button {
+      width: 100%;
+      padding: 14px;
+      margin: 8px 0;
+      border: 0;
+      border-radius: 8px;
+      background: #0284c7;
+      color: white;
+      font-size: 16px;
+    }
+    #status { color: #facc15; }
+    #messages {
+      height: 220px;
+      overflow-y: auto;
+      background: #0f172a;
+      padding: 10px;
+      border-radius: 8px;
+      overflow-wrap: anywhere;
+    }
+    input {
+      box-sizing: border-box;
+      width: 100%;
+      padding: 12px;
+      margin-top: 10px;
+      border-radius: 8px;
+      border: 0;
+    }
+    .note { font-size: 13px; color: #cbd5e1; }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <h1>MPOM Chat Bluetooth</h1>
+    <p id="status">Estado: no conectado</p>
+    <button id="connect">Conectar dispositivo Bluetooth</button>
+    <div id="messages"></div>
+    <input id="message" placeholder="Escribe tu mensaje">
+    <button id="send">Enviar mensaje</button>
+    <p class="note">
+      Requiere un navegador compatible y un dispositivo Bluetooth compatible.
+      Bluetooth Web no funciona en todos los teléfonos ni con todos los dispositivos.
+    </p>
+  </div>
+
+  <script>
+    let device;
+    let characteristic;
+
+    const status = document.getElementById("status");
+    const messages = document.getElementById("messages");
+
+    function showMessage(text) {
+      const p = document.createElement("p");
+      p.textContent = text;
+      messages.appendChild(p);
+      messages.scrollTop = messages.scrollHeight;
+    }
+
+    document.getElementById("connect").onclick = async () => {
+      try {
+        if (!navigator.bluetooth) {
+          status.textContent =
+            "Este navegador no admite Web Bluetooth.";
+          return;
+        }
+
+        device = await navigator.bluetooth.requestDevice({
+          acceptAllDevices: true,
+          optionalServices: []
+        });
+
+        status.textContent =
+          "Dispositivo seleccionado: " + device.name;
+
+        showMessage("Seleccionaste: " + (device.name || "Bluetooth"));
+      } catch (error) {
+        status.textContent = "No se pudo seleccionar el dispositivo.";
+        showMessage(error.message);
+      }
+    };
+
+    document.getElementById("send").onclick = () => {
+      showMessage("Para enviar mensajes reales, primero hay que configurar un servicio Bluetooth compatible.");
+    };
+  </script>
+</body>
+</html>
